@@ -1,0 +1,51 @@
+#!groovy
+
+properties([
+    [
+        $class: 'GithubProjectProperty',
+        displayName: 'Financial Remedy Document Generator Client',
+        projectUrlStr: 'https://github.com/hmcts/finrem-document-generator-client.git'
+    ],
+    pipelineTriggers([
+        [$class: 'GitHubPushTrigger']
+    ])
+])
+
+@Library("Infrastructure")
+
+def type = "java"
+def product = "finrem"
+def component = "dgs"
+
+def channel = '#finrem-dev'
+
+List<LinkedHashMap<String, Object>> secrets = [
+    secret("finrem-doc-s2s-auth-secret", "IDAM_AUTH_SECRET"),
+    secret("idam-secret", "AUTH_IDAM_CLIENT_SECRET"),
+    secret("finrem-doc-s2s-auth-secret", "AUTH_PROVIDER_SERVICE_CLIENT_KEY")
+]
+
+static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
+    [ $class: 'AzureKeyVaultSecret',
+      secretType: 'Secret',
+      name: secretName,
+      version: '',
+      envVariable: envVar
+    ]
+}
+
+withPipeline(type , product, component) {
+    if (env.CHANGE_TITLE && !env.CHANGE_TITLE.startsWith('[PREVIEW]')) {
+        enableDockerBuild()
+        enableDeployToAKS()
+    }
+
+    loadVaultSecrets(secrets)
+    setVaultName('finrem')
+
+    after('checkout') {
+        echo '${product}-${component} checked out'
+    }
+
+    enableSlackNotifications(channel)
+}
