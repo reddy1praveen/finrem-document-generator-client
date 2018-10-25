@@ -15,7 +15,7 @@ properties([
 
 def type = "java"
 def product = "finrem"
-def component = "dgs"
+def component = "frds"
 
 def channel = '#finrem-dev'
 

@@ -10,13 +10,13 @@ locals {
   previewVaultName = "${var.reform_team}-aat"
   nonPreviewVaultName = "${var.reform_team}-${var.env}"
   vaultName = "${var.env == "preview" ? local.previewVaultName : local.nonPreviewVaultName}"
-  vaultUri = "${data.azurerm_key_vault.div_key_vault.vault_uri}"
-    
-  asp_name = "${var.env == "prod" ? "div-dgs-prod" : "${var.raw_product}-${var.env}"}"
-  asp_rg = "${var.env == "prod" ? "div-dgs-prod" : "${var.raw_product}-${var.env}"}"
+  vaultUri = "${data.azurerm_key_vault.finrem_key_vault.vault_uri}"
+
+  asp_name = "${var.env == "prod" ? "finrem-frds-prod" : "${var.raw_product}-${var.env}"}"
+  asp_rg = "${var.env == "prod" ? "finrem-frds-prod" : "${var.raw_product}-${var.env}"}"
 }
 
-module "div-dgs" {
+module "finrem-frds" {
   source                          = "git@github.com:hmcts/moj-module-webapp.git?ref=master"
   product                         = "${var.product}-${var.component}"
   location                        = "${var.location}"
@@ -36,7 +36,7 @@ module "div-dgs" {
     REFORM_ENVIRONMENT                                    = "${var.env}"
     AUTH_PROVIDER_SERVICE_CLIENT_BASEURL                  = "${local.idam_s2s_url}"
     AUTH_PROVIDER_SERVICE_CLIENT_MICROSERVICE             = "${var.auth_provider_service_client_microservice}"
-    AUTH_PROVIDER_SERVICE_CLIENT_KEY                      = "${data.azurerm_key_vault_secret.div-doc-s2s-auth-secret.value}"
+    AUTH_PROVIDER_SERVICE_CLIENT_KEY                      = "${data.azurerm_key_vault_secret.finrem-doc-s2s-auth-secret.value}"
     AUTH_PROVIDER_SERVICE_CLIENT_TOKENTIMETOLIVEINSECONDS = "${var.auth_provider_service_client_tokentimetoliveinseconds}"
     PDF_SERVICE_BASEURL                                   = "${local.pdf_service_url}"
     EVIDENCE_MANAGEMENT_CLIENT_API_BASEURL                = "${local.evidence_management_client_api_url}"
@@ -45,17 +45,17 @@ module "div-dgs" {
   }
 }
 
-data "azurerm_key_vault" "div_key_vault" {
+data "azurerm_key_vault" "finrem_key_vault" {
     name                = "${local.vaultName}"
     resource_group_name = "${local.vaultName}"
 }
 
-data "azurerm_key_vault_secret" "div-doc-s2s-auth-secret" {
-    name      = "div-doc-s2s-auth-secret"
-    vault_uri = "${data.azurerm_key_vault.div_key_vault.vault_uri}"
+data "azurerm_key_vault_secret" "finrem-doc-s2s-auth-secret" {
+    name      = "finrem-doc-s2s-auth-secret"
+    vault_uri = "${data.azurerm_key_vault.finrem_key_vault.vault_uri}"
 }
 
 data "azurerm_key_vault_secret" "idam-secret" {
     name      = "idam-secret"
-    vault_uri = "${data.azurerm_key_vault.div_key_vault.vault_uri}"
+    vault_uri = "${data.azurerm_key_vault.finrem_key_vault.vault_uri}"
 }
