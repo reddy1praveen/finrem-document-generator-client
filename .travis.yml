@@ -19,6 +19,7 @@ cache:
 
 script:
   - ./gradlew check
+  - ./gradlew functional
   - ./gradlew jacocoTestReport
 
 after_success:
