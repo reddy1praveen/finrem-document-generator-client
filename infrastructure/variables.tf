@@ -1,5 +1,5 @@
 variable "reform_service_name" {
-  default = "dgc"
+  default = "dgcs"
 }
 
 variable "reform_team" {

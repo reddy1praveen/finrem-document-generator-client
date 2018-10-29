@@ -60,7 +60,7 @@ documentation:
 
 spring:
   application:
-    name: "finrem-dgc"
+    name: "finrem-dgcs"
   resources:
     static-locations:
 

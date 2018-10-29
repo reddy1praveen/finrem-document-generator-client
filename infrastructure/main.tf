@@ -12,11 +12,11 @@ locals {
   vaultName = "${var.env == "preview" ? local.previewVaultName : local.nonPreviewVaultName}"
   vaultUri = "${data.azurerm_key_vault.finrem_key_vault.vault_uri}"
 
-  asp_name = "${var.env == "prod" ? "finrem-dgc-prod" : "${var.raw_product}-${var.env}"}"
-  asp_rg = "${var.env == "prod" ? "finrem-dgc-prod" : "${var.raw_product}-${var.env}"}"
+  asp_name = "${var.env == "prod" ? "finrem-dgcs-prod" : "${var.raw_product}-${var.env}"}"
+  asp_rg = "${var.env == "prod" ? "finrem-dgcs-prod" : "${var.raw_product}-${var.env}"}"
 }
 
-module "finrem-dgc" {
+module "finrem-dgcs" {
   source                          = "git@github.com:hmcts/moj-module-webapp.git?ref=master"
   product                         = "${var.product}-${var.component}"
   location                        = "${var.location}"
