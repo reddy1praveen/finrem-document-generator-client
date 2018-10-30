@@ -35,13 +35,10 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
 }
 
 withPipeline(type , product, component) {
-    if (env.CHANGE_TITLE && !env.CHANGE_TITLE.startsWith('[PREVIEW]')) {
-        enableDockerBuild()
-        enableDeployToAKS()
-    }
-
+    enableDockerBuild()
+    enableDeployToAKS()
     loadVaultSecrets(secrets)
-    setVaultName('finrem')
+    setVaultName(product)
 
     after('checkout') {
         echo '${product}-${component} checked out'
