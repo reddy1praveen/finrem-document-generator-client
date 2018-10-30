@@ -1,5 +1,5 @@
 server:
-  port: ${FINREM_DOCUMENT_GENERATOR_PORT:4007}
+  port: ${FINREM_DOCUMENT_GENERATOR_PORT:4009}
 
 service:
   pdf-service:
