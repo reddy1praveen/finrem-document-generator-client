@@ -1,5 +1,5 @@
 server:
-  port: ${DIV_DOCUMENT_GENERATOR_PORT:4007}
+  port: ${FINREM_DOCUMENT_GENERATOR_PORT:4009}
 
 service:
   pdf-service:
@@ -60,7 +60,7 @@ documentation:
 
 spring:
   application:
-    name: "div-dgs"
+    name: "finrem-dgcs"
   resources:
     static-locations:
 
@@ -94,7 +94,7 @@ management:
 logging:
   level:
     org.springframework.web: ERROR
-    uk.gov.hmcts.reform.divorce.documentgenerator: DEBUG
+    uk.gov.hmcts.reform.finrem.documentgenerator: DEBUG
   pattern:
     console: "%d{yyyy-MMM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{15} - %msg%n"
 

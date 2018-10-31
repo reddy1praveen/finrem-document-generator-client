@@ -49,12 +49,12 @@ you can run the application by executing following command:
 ```
 
 As a result the following container(s) will get created and started:
- - long living container for API application exposing port `4007`
+ - long living container for API application exposing port `4009`
 
 ### API documentation
 
 API documentation is provided with Swagger:
- - `http://localhost:4007/swagger-ui.html` - UI to interact with the API resources
+ - `http://localhost:4009/swagger-ui.html` - UI to interact with the API resources
 
 ## Developing
 
