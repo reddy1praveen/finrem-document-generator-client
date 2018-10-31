@@ -61,10 +61,10 @@ spec:
     - name: http
       protocol: TCP
       port: 80
-      targetPort: 4550
+      targetPort: 4009
   selector:
     app: ${SERVICE_NAME}
-    
+
 #
 # Ingress
 #
