@@ -10,7 +10,9 @@ import java.util.Map;
 @Slf4j
 public class DefaultDocumentManagementService implements DocumentManagementService {
     @Override
-    public Document generateAndStoreDocument(String templateName, Map<String, Object> placeholders, String authorizationToken) {
+    public Document generateAndStoreDocument(String templateName,
+                                             Map<String, Object> placeholders,
+                                             String authorizationToken) {
         return null;
     }
 
