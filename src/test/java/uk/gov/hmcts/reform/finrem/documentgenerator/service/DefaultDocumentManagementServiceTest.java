@@ -23,6 +23,6 @@ public class DefaultDocumentManagementServiceTest {
 
     @Test
     public void generateDocument() {
-        assertEquals(service.generateDocument("", new HashMap<>()).length, 0);
+        assertEquals(0, service.generateDocument("", new HashMap<>()).length);
     }
 }
