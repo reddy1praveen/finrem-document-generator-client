@@ -17,14 +17,14 @@ public class FileUploadResponseTest {
     public void properties() {
         FileUploadResponse response = fileUploadResponse();
 
-        assertEquals(response.getStatus(), OK);
-        assertEquals(response.getFileUrl(), URL);
-        assertEquals(response.getFileName(), FILE_NAME);
-        assertEquals(response.getMimeType(), MIME_TYPE);
-        assertEquals(response.getCreatedBy(), CREATED_BY);
-        assertEquals(response.getLastModifiedBy(), CREATED_BY);
-        assertEquals(response.getCreatedOn(), CREATED_ON);
-        assertEquals(response.getModifiedOn(), CREATED_ON);
+        assertEquals(OK, response.getStatus());
+        assertEquals(URL, response.getFileUrl());
+        assertEquals(FILE_NAME, response.getFileName());
+        assertEquals(MIME_TYPE, response.getMimeType());
+        assertEquals(CREATED_BY, response.getCreatedBy());
+        assertEquals(CREATED_BY, response.getLastModifiedBy());
+        assertEquals(CREATED_ON, response.getCreatedOn());
+        assertEquals(CREATED_ON, response.getModifiedOn());
     }
 
     private FileUploadResponse fileUploadResponse() {

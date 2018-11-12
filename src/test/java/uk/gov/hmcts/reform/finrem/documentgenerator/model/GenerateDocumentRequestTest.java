@@ -12,7 +12,7 @@ public class GenerateDocumentRequestTest {
     @Test
     public void properties() {
         GenerateDocumentRequest request = new GenerateDocumentRequest(TEMPLATE, ImmutableMap.of());
-        assertEquals(request.getTemplate(), TEMPLATE);
-        assertEquals(request.getValues(), ImmutableMap.of());
+        assertEquals(TEMPLATE, request.getTemplate());
+        assertEquals(ImmutableMap.of(), request.getValues());
     }
 }

@@ -14,9 +14,9 @@ public class DocumentTest {
     public void properties() {
         Document doc = doc();
 
-        assertEquals(doc.getCreatedOn(), CREATED_ON);
-        assertEquals(doc.getMimeType(), MIME_TYPE);
-        assertEquals(doc.getUrl(), URL);
+        assertEquals(CREATED_ON, doc.getCreatedOn());
+        assertEquals(MIME_TYPE, doc.getMimeType());
+        assertEquals(URL, doc.getUrl());
     }
 
     private Document doc() {
