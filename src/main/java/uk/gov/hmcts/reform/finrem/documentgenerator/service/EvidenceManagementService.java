@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.hmcts.reform.finrem.documentgenerator.error.DocumentStorageException;
 import uk.gov.hmcts.reform.finrem.documentgenerator.model.FileUploadResponse;
 
@@ -32,8 +33,8 @@ public class EvidenceManagementService {
     @Value("${service.evidence-management-client-api.uri}")
     private String evidenceManagementEndpoint;
 
-    @Value("${service.evidence-management-client-api.delete-uri}")
-    private String evidenceManagementDeleteEndpoint;
+    @Value("${service.evidence-management-client-api.get-uri}")
+    private String evidenceManagementGetEndpoint;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -48,6 +49,17 @@ public class EvidenceManagementService {
         } else {
             throw new DocumentStorageException("Failed to store document");
         }
+    }
+
+    public byte[] retrieveDocument(String fileUrl, String authorizationToken) {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(evidenceManagementGetEndpoint);
+        builder.queryParam("fileUrl", fileUrl);
+
+        return restTemplate.exchange(
+            builder.build().encode().toUriString(),
+            HttpMethod.GET,
+            new HttpEntity<>(getAuthHttpHeaders(authorizationToken)),
+            byte[].class).getBody();
     }
 
     private FileUploadResponse save(byte[] document, String authorizationToken) {

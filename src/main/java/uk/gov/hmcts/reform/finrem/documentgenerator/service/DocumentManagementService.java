@@ -9,6 +9,7 @@ import uk.gov.hmcts.reform.finrem.documentgenerator.model.FileUploadResponse;
 import java.util.Map;
 
 import static java.lang.String.format;
+import static uk.gov.hmcts.reform.finrem.documentgenerator.service.DocumentSupport.convert;
 
 @Service
 @Slf4j
@@ -38,17 +39,4 @@ public class DocumentManagementService {
         return convert(response);
     }
 
-    private static Document convert(FileUploadResponse response) {
-        return Document.builder()
-            .fileName(response.getFileName())
-            .url(response.getFileUrl())
-            .binaryUrl(toBinaryUrl(response))
-            .mimeType(response.getMimeType())
-            .createdOn(response.getCreatedOn())
-            .build();
-    }
-
-    private static String toBinaryUrl(FileUploadResponse response) {
-        return format("%s/binary", response.getFileUrl());
-    }
 }
