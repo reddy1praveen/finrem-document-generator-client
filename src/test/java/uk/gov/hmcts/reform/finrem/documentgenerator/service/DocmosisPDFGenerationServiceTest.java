@@ -65,14 +65,13 @@ public class DocmosisPDFGenerationServiceTest {
     }
 
     @Test
-    public void generatePdfDocument() {
-        mockServer.expect(requestTo(PDF_SERVICE_URI))
-            .andExpect(method(HttpMethod.POST))
-            .andRespond(withSuccess(FILE_CONTENT, MediaType.APPLICATION_JSON));
+    public void generatePdfDocumentWithCaseData() {
+        doGeneratePdfDocumentTest(PLACEHOLDERS);
+    }
 
-        byte[] result = pdfGenerationService.generateDocFrom(TEMPLATE_NAME, PLACEHOLDERS);
-        assertThat(result, is(notNullValue()));
-        assertThat(result, is(equalTo(FILE_CONTENT.getBytes())));
+    @Test
+    public void generatePdfDocumentWithOtherData() {
+        doGeneratePdfDocumentTest( ImmutableMap.of("name", "value"));
     }
 
     @Test
@@ -98,5 +97,16 @@ public class DocmosisPDFGenerationServiceTest {
     @Test(expected = IllegalArgumentException.class)
     public void nullTemplateName() {
         pdfGenerationService.generateDocFrom(null, PLACEHOLDERS);
+    }
+
+
+    private void doGeneratePdfDocumentTest(Map<String, Object> placeholders) {
+        mockServer.expect(requestTo(PDF_SERVICE_URI))
+            .andExpect(method(HttpMethod.POST))
+            .andRespond(withSuccess(FILE_CONTENT, MediaType.APPLICATION_JSON));
+
+        byte[] result = pdfGenerationService.generateDocFrom(TEMPLATE_NAME, placeholders);
+        assertThat(result, is(notNullValue()));
+        assertThat(result, is(equalTo(FILE_CONTENT.getBytes())));
     }
 }

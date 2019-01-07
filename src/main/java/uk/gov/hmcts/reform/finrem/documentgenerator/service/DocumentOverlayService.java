@@ -16,6 +16,8 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 @Slf4j
 public class DocumentOverlayService {
 
+    private static final String PDF_FILE_NAME = "consent-order.pdf";
+
     @Autowired
     private PDFGenerationService pdfGenerationService;
 
@@ -36,7 +38,7 @@ public class DocumentOverlayService {
 
     private FileUploadResponse storeDocument(byte[] document, String authorizationToken) {
         log.debug("Store document requested with document of size [{}]", document.length);
-        FileUploadResponse response = evidenceManagementService.storeDocument(document, authorizationToken);
+        FileUploadResponse response = evidenceManagementService.storeDocument(PDF_FILE_NAME, document, authorizationToken);
 
         return response;
     }

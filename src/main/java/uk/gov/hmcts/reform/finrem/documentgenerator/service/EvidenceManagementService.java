@@ -28,7 +28,6 @@ import static java.util.Objects.requireNonNull;
 public class EvidenceManagementService {
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String FILE_PARAMETER = "file";
-    private static final String DEFAULT_NAME_FOR_PDF_FILE = "MiniFormA.pdf";
 
     @Value("${service.evidence-management-client-api.uri}")
     private String evidenceManagementEndpoint;
@@ -39,10 +38,10 @@ public class EvidenceManagementService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public FileUploadResponse storeDocument(byte[] document, String authorizationToken) {
+    public FileUploadResponse storeDocument(String documentName, byte[] document, String authorizationToken) {
         log.info("Save document call to evidence management is made document of size [{}]", document.length);
 
-        FileUploadResponse fileUploadResponse = save(document, authorizationToken);
+        FileUploadResponse fileUploadResponse = save(documentName, document, authorizationToken);
 
         if (fileUploadResponse.getStatus() == HttpStatus.OK) {
             return fileUploadResponse;
@@ -62,13 +61,13 @@ public class EvidenceManagementService {
             byte[].class).getBody();
     }
 
-    private FileUploadResponse save(byte[] document, String authorizationToken) {
+    private FileUploadResponse save(String documentName, byte[] document, String authorizationToken) {
         requireNonNull(document);
 
         ResponseEntity<List<FileUploadResponse>> responseEntity = restTemplate.exchange(evidenceManagementEndpoint,
                 HttpMethod.POST,
                 new HttpEntity<>(
-                        buildStoreDocumentRequest(document, DEFAULT_NAME_FOR_PDF_FILE),
+                        buildStoreDocumentRequest(document, documentName),
                     getHttpHeaders(authorizationToken)),
                 new ParameterizedTypeReference<List<FileUploadResponse>>() {
                 });

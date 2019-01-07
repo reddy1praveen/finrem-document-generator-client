@@ -21,8 +21,8 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class DocumentControllerTest {
 
-    public static final String FILE_URL = "file_url";
     public static final String AUTH_TOKEN = "AUTH_TOKEN";
+
     @Mock
     private DocumentManagementService documentManagementService;
 
@@ -40,6 +40,8 @@ public class DocumentControllerTest {
         Document actual = controller.generatePDF(AUTH_TOKEN, new DocumentRequest(templateName, placeholder));
 
         assertThat(actual, is(expected));
-        verify(documentManagementService, times(1)).storeDocument(templateName, placeholder, AUTH_TOKEN);
+        verify(
+            documentManagementService, times(1)
+        ).storeDocument(templateName, placeholder, AUTH_TOKEN);
     }
 }

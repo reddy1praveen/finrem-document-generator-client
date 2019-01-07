@@ -35,7 +35,6 @@ public class DocumentSupport {
             PDPage coverPage = coverDoc.getPage(0);
             doc.importPage(coverPage);
 
-            doc.importPage(coverPage);
             COSDictionary pages = (COSDictionary) doc.getDocumentCatalog().getCOSObject().getDictionaryObject(COSName.PAGES);
             COSArray kids = (COSArray) pages.getDictionaryObject(COSName.KIDS);
 

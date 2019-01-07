@@ -14,6 +14,7 @@ import static uk.gov.hmcts.reform.finrem.documentgenerator.service.DocumentSuppo
 @Service
 @Slf4j
 public class DocumentManagementService {
+    private static final String PDF_FILE_NAME = "MiniFormA.pdf";
 
     @Autowired
     private PDFGenerationService pdfGenerationService;
@@ -34,7 +35,8 @@ public class DocumentManagementService {
 
     private Document storeDocument(byte[] document, String authorizationToken) {
         log.debug("Store document requested with document of size [{}]", document.length);
-        FileUploadResponse response = evidenceManagementService.storeDocument(document, authorizationToken);
+        FileUploadResponse response =
+            evidenceManagementService.storeDocument(PDF_FILE_NAME, document, authorizationToken);
 
         return convert(response);
     }

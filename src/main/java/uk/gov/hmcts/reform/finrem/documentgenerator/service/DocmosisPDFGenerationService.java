@@ -11,6 +11,8 @@ import uk.gov.hmcts.reform.finrem.documentgenerator.error.PDFGenerationException
 import uk.gov.hmcts.reform.finrem.documentgenerator.model.PdfDocumentRequest;
 
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Objects.requireNonNull;
@@ -33,6 +35,15 @@ public class DocmosisPDFGenerationService implements PDFGenerationService {
 
     @Value("${service.pdf-service.accessKey}")
     private String pdfServiceAccessKey;
+
+    private final Function<Map<String, Object>, Map<String, Object>> CASE_DATA_EXTRACTOR = (placeholders) -> {
+        Map<String, Object> data = (Map<String, Object>) ((Map) placeholders.get(CASE_DETAILS)).get(CASE_DATA);
+        data.put(pdfDocumentConfig.getDisplayTemplateKey(), pdfDocumentConfig.getDisplayTemplateVal());
+        data.put(pdfDocumentConfig.getFamilyCourtImgKey(), pdfDocumentConfig.getFamilyCourtImgVal());
+        data.put(pdfDocumentConfig.getHmctsImgKey(), pdfDocumentConfig.getHmctsImgVal());
+
+        return data;
+    };
 
     @Override
     public byte[] generateDocFrom(String templateName, Map<String, Object> placeholders) {
@@ -63,11 +74,8 @@ public class DocmosisPDFGenerationService implements PDFGenerationService {
 
     @SuppressWarnings("unchecked")
     private Map<String, Object> caseData(Map<String, Object> placeholders) {
-        Map<String, Object> data = (Map<String, Object>) ((Map) placeholders.get(CASE_DETAILS)).get(CASE_DATA);
-        data.put(pdfDocumentConfig.getDisplayTemplateKey(), pdfDocumentConfig.getDisplayTemplateVal());
-        data.put(pdfDocumentConfig.getFamilyCourtImgKey(), pdfDocumentConfig.getFamilyCourtImgVal());
-        data.put(pdfDocumentConfig.getHmctsImgKey(), pdfDocumentConfig.getHmctsImgVal());
-
-        return data;
+        return Optional
+            .ofNullable(placeholders.get(CASE_DETAILS))
+            .map(o -> CASE_DATA_EXTRACTOR.apply(placeholders)).orElse(placeholders);
     }
 }
