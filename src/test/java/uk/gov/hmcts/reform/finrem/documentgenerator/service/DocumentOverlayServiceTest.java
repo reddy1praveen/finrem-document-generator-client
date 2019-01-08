@@ -3,12 +3,15 @@ package uk.gov.hmcts.reform.finrem.documentgenerator.service;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.web.client.HttpClientErrorException;
 import uk.gov.hmcts.reform.finrem.documentgenerator.DocumentGeneratorApplication;
+import uk.gov.hmcts.reform.finrem.documentgenerator.error.DocumentStorageException;
 import uk.gov.hmcts.reform.finrem.documentgenerator.error.PDFGenerationException;
 import uk.gov.hmcts.reform.finrem.documentgenerator.model.Document;
 
@@ -24,6 +27,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
 import static uk.gov.hmcts.reform.finrem.documentgenerator.TestResource.document;
 import static uk.gov.hmcts.reform.finrem.documentgenerator.TestResource.fileUploadResponse;
 
@@ -51,7 +55,10 @@ public class DocumentOverlayServiceTest {
 
     @Test
     public void storeConsentOrderOverlayWithSuccess() throws Exception {
-        setUpExternalServicesDependencies();
+        setUpDocumentRetrievals(invocationOnMock -> mainDocContent(), invocationOnMock -> coverPageContent());
+        when(
+            evidenceManagementService.storeDocument(eq("consent-order.pdf"), isA(byte[].class), eq(AUTH_TOKEN)))
+            .thenReturn(fileUploadResponse());
 
         CompletableFuture<Document> future = service.generateConsentOrderOverlay(TEMPLATE_NAME, PLACEHOLDERS, AUTH_TOKEN);
         Document document = future.get();
@@ -60,9 +67,9 @@ public class DocumentOverlayServiceTest {
 
     @Test
     public void storeConsentOrderOverlayPdfGenerationError() throws Exception {
-        when(pdfGenerationService.generateDocFrom(TEMPLATE_NAME, DATA))
-            .thenThrow(new PDFGenerationException("error", new Exception()));
-        when(evidenceManagementService.retrieveDocument(FILE_URL, AUTH_TOKEN)).thenReturn(coverPageContent());
+        setUpDocumentRetrievals(
+            invocationOnMock ->  { throw new PDFGenerationException("error", new Exception()); },
+            invocationOnMock -> coverPageContent());
 
         try {
             service.generateConsentOrderOverlay(TEMPLATE_NAME, PLACEHOLDERS, AUTH_TOKEN).get();
@@ -72,12 +79,40 @@ public class DocumentOverlayServiceTest {
         }
     }
 
-    private void setUpExternalServicesDependencies() throws Exception {
-        when(pdfGenerationService.generateDocFrom(TEMPLATE_NAME, DATA)).thenReturn(mainDocContent());
-        when(evidenceManagementService.retrieveDocument(FILE_URL, AUTH_TOKEN)).thenReturn(coverPageContent());
+    @Test
+    public void storeConsentOrderOverlayDocumentRetrievalError() throws Exception{
+        setUpDocumentRetrievals(
+            invocationOnMock -> mainDocContent(),
+            invocationOnMock -> { throw new HttpClientErrorException(SERVICE_UNAVAILABLE); });
+
+        try {
+            service.generateConsentOrderOverlay(TEMPLATE_NAME, PLACEHOLDERS, AUTH_TOKEN).get();
+            fail("should have thrown PDFGenerationException");
+        } catch (Exception e) {
+            assertThat(e.getCause(), is(instanceOf(HttpClientErrorException.class)));
+        }
+    }
+
+    @Test
+    public void storeConsentOrderOverlayDocumentStoreError() throws Exception{
+        setUpDocumentRetrievals(
+            invocationOnMock -> mainDocContent(),
+            invocationOnMock -> coverPageContent());
         when(
             evidenceManagementService.storeDocument(eq("consent-order.pdf"), isA(byte[].class), eq(AUTH_TOKEN)))
-            .thenReturn(fileUploadResponse());
+            .thenThrow(new DocumentStorageException("error"));
+
+        try {
+            service.generateConsentOrderOverlay(TEMPLATE_NAME, PLACEHOLDERS, AUTH_TOKEN).get();
+            fail("should have thrown DocumentStorageException");
+        } catch (Exception e) {
+            assertThat(e.getCause(), is(instanceOf(DocumentStorageException.class)));
+        }
+    }
+
+    private void setUpDocumentRetrievals(Answer<byte[]> pdf, Answer<byte[]> coverPage) {
+        when(pdfGenerationService.generateDocFrom(TEMPLATE_NAME, DATA)).thenAnswer(pdf);
+        when(evidenceManagementService.retrieveDocument(FILE_URL, AUTH_TOKEN)).thenAnswer(coverPage);
     }
 
     private byte[] mainDocContent() throws Exception {
