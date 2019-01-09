@@ -26,16 +26,14 @@ import static org.springframework.test.web.client.ExpectedCount.once;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.hmcts.reform.finrem.documentgenerator.e2etest.TestSupport.documentResponse;
-import static uk.gov.hmcts.reform.finrem.documentgenerator.e2etest.TestSupport.documentStoreServiceResponse;
-import static uk.gov.hmcts.reform.finrem.documentgenerator.e2etest.TestSupport.invalidRequest;
-import static uk.gov.hmcts.reform.finrem.documentgenerator.e2etest.TestSupport.pdfServiceResponse;
-import static uk.gov.hmcts.reform.finrem.documentgenerator.e2etest.TestSupport.templateNotSuppliedRequest;
-import static uk.gov.hmcts.reform.finrem.documentgenerator.e2etest.TestSupport.templateValuesNotSuppliedRequest;
-import static uk.gov.hmcts.reform.finrem.documentgenerator.e2etest.TestSupport.validRequest;
+import static uk.gov.hmcts.reform.finrem.documentgenerator.TestResource.documentResponse;
+import static uk.gov.hmcts.reform.finrem.documentgenerator.TestResource.documentStoreServiceResponse;
+import static uk.gov.hmcts.reform.finrem.documentgenerator.TestResource.pdfServiceResponse;
+import static uk.gov.hmcts.reform.finrem.documentgenerator.TestResource.templateNotSuppliedRequest;
+import static uk.gov.hmcts.reform.finrem.documentgenerator.TestResource.templateValuesNotSuppliedRequest;
+import static uk.gov.hmcts.reform.finrem.documentgenerator.TestResource.validRequest;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = DocumentGeneratorApplication.class)
@@ -44,7 +42,6 @@ import static uk.gov.hmcts.reform.finrem.documentgenerator.e2etest.TestSupport.v
 @AutoConfigureMockMvc
 public class MiniFormAGenerateE2ETest {
     private static final String API_URL = "/version/1/generatePDF";
-    private static final String DELETE_API_URL = "/version/1/delete-pdf-document";
 
     @Autowired
     private MockMvc webClient;
@@ -54,9 +51,6 @@ public class MiniFormAGenerateE2ETest {
 
     @Value("${service.evidence-management-client-api.uri}")
     private String emClientAPIUri;
-
-    @Value("${service.evidence-management-client-api.delete-uri}")
-    private String evidenceManagementDeleteUri;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -84,15 +78,6 @@ public class MiniFormAGenerateE2ETest {
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void invalidJson() throws Exception {
-        webClient.perform(post(API_URL)
-            .content(invalidRequest().toString())
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isInternalServerError());
     }
 
     @Test

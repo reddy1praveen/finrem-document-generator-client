@@ -44,9 +44,9 @@ public class EvidenceManagementServiceTest {
     private static final String SAVE_DOC_URL = "http://localhost:4006/emclientapi/version/1/upload";
     private static final String GET_DOC_URL = "http://localhost:4006/emclientapi/version/1/files";
     private static final String AUTH_TOKEN = "Bearer KJBUYVBJLIJBIBJHBbhjbiyYVIUJHV";
-    public static final String DOC_CONTENT = "welcome doc";
+    private static final String DOC_CONTENT = "welcome doc";
     private static final String DOC_NAME = "document_name";
-    public static final String FILE_URL = "http://dm-store/JKlkm";
+    private static final String FILE_URL = "http://dm-store/JKlkm";
 
     @Autowired
     private EvidenceManagementService service;
@@ -94,10 +94,10 @@ public class EvidenceManagementServiceTest {
         mockServer.expect(requestTo(GET_DOC_URL.concat("?fileUrl=").concat(FILE_URL)))
             .andExpect(method(HttpMethod.GET))
             .andExpect(header("Authorization", equalTo(AUTH_TOKEN)))
-            .andRespond(withSuccess("hello".getBytes(), MediaType.APPLICATION_OCTET_STREAM));
+            .andRespond(withSuccess(DOC_CONTENT.getBytes(), MediaType.APPLICATION_OCTET_STREAM));
 
         byte[] bytes = service.retrieveDocument(FILE_URL, AUTH_TOKEN);
-        assertThat(bytes, is("hello".getBytes()));
+        assertThat(bytes, is(DOC_CONTENT.getBytes()));
         mockServer.verify();
     }
 
@@ -109,6 +109,8 @@ public class EvidenceManagementServiceTest {
             .andRespond(withBadRequest());
 
         service.retrieveDocument(FILE_URL, AUTH_TOKEN);
+
+        mockServer.verify();
     }
 
     private String jsonResponse(FileUploadResponse fileUploadResponse) throws JsonProcessingException {
