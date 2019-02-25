@@ -60,12 +60,12 @@ data "azurerm_key_vault" "finrem_key_vault" {
 
 data "azurerm_key_vault_secret" "pdf-service-access-key" {
     name      = "docmosis-api-key"
-    vault_uri = "${local.docmosisVaultUri}"
+    vault_uri = "https://docmosisiaasdevkv.vault.azure.net/"
 }
 
 data "azurerm_key_vault_secret" "docmosis_endpoint" {
     name      = "docmosis-endpoint"
-    vault_uri = "${local.docmosisVaultUri}"
+    vault_uri = "https://docmosisiaasdevkv.vault.azure.net/"
 }
 
 data "azurerm_key_vault_secret" "finrem-doc-s2s-auth-secret" {
